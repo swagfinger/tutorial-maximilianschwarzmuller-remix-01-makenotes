@@ -37,6 +37,8 @@ export async function action({ request }) {
 
   await storeNotes(updatedNotes);
 
+  // testing button loading state in NewNote
+  await new Promise((resolve, reject) => setTimeout(() => resolve(), 2000));
   return redirect('/notes');
 }
 
