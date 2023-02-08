@@ -31,6 +31,11 @@ export async function action({ request }) {
   const formData = await request.formData(); //gets data from form submit
   const nodeData = Object.fromEntries(formData);
 
+  //validation - can send data out to be picked up by useActionData() hook.
+  if (nodeData.title.trim().length < 5) {
+    return { message: 'invalid title - must be atleast 5 chars long' };
+  }
+
   const existingNotes = await getStoredNotes();
   nodeData.id = new Date().toISOString();
   const updatedNotes = existingNotes.concat(nodeData);
