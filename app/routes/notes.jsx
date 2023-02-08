@@ -1,13 +1,45 @@
+import { redirect, json } from '@remix-run/node';
+import { useLoaderData } from '@remix-run/react';
+
 import NewNote, { links as newNoteLinks } from '~/components/NewNote';
+import NoteList, { links as noteListLinks } from '~/components/NoteList';
+
+import { getStoredNotes, storeNotes } from '../data/notes';
 
 export default function NotesPage() {
+  // STEP3
+  const notes = useLoaderData(); //hook gives us data from loader()
   return (
     <main>
       <NewNote />
+      <NoteList notes={notes} />
     </main>
   );
 }
 
+//STEP2
+//runs on backend - triggers when with GET request eg. when page loads
+export async function loader() {
+  const notes = await getStoredNotes();
+  return json(notes); //serialized obj: no functions
+}
+
+//STEP1
+//runs on backend - triggers when non-GET request is called. like a POST
+//receives data object - with 'request' object with details about request submitted by form.
+export async function action({ request }) {
+  const formData = await request.formData(); //gets data from form submit
+  const nodeData = Object.fromEntries(formData);
+
+  const existingNotes = await getStoredNotes();
+  nodeData.id = new Date().toISOString();
+  const updatedNotes = existingNotes.concat(nodeData);
+
+  await storeNotes(updatedNotes);
+
+  return redirect('/notes');
+}
+
 export function links() {
-  return [...newNoteLinks()];
+  return [...newNoteLinks(), ...noteListLinks()];
 }
