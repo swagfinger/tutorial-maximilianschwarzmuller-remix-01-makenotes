@@ -1,5 +1,5 @@
 import { redirect, json } from '@remix-run/node';
-import { useLoaderData, Link } from '@remix-run/react';
+import { useLoaderData, Link, useCatch } from '@remix-run/react';
 
 import NewNote, { links as newNoteLinks } from '~/components/NewNote';
 import NoteList, { links as noteListLinks } from '~/components/NoteList';
@@ -21,6 +21,18 @@ export default function NotesPage() {
 //runs on backend - triggers when with GET request eg. when page loads
 export async function loader() {
   const notes = await getStoredNotes();
+
+  //CatchBoundary with throw - json({}) or new Response()
+  if (!notes || notes.length === 0) {
+    //thow 'not working' text or an object - goes to ErrorBoundary
+
+    //throwing a response - caught by CatchBoundary()
+    throw json(
+      { message: 'Could not find any notes.' },
+      { status: 404, statusText: 'not Found' }
+    );
+  }
+
   return json(notes); //serialized obj: no functions
 }
 
@@ -49,6 +61,21 @@ export async function action({ request }) {
 
 export function links() {
   return [...newNoteLinks(), ...noteListLinks()];
+}
+
+//this renders when an error is thrown
+export function CatchBoundary() {
+  //use useCatch() hook to catch errors thrown
+  const caughtResponse = useCatch();
+  const message = caughtResponse.data?.message || 'data not found';
+
+  return (
+    <main>
+      <NewNote />
+
+      <p className='info-message'>{message}</p>
+    </main>
+  );
 }
 
 export function ErrorBoundary({ error }) {
