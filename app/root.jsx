@@ -1,4 +1,5 @@
 import {
+  Link,
   Links,
   LiveReload,
   Meta,
@@ -26,6 +27,35 @@ export default function App() {
         <header>
           <MainNavigation />
         </header>
+        <Outlet />
+        <ScrollRestoration />
+        <Scripts />
+        <LiveReload />
+      </body>
+    </html>
+  );
+}
+
+//ErrorBoundary will render if there are errors anywhere in app - receives error prop
+export function ErrorBoundary({ error }) {
+  return (
+    <html lang='en'>
+      <head>
+        <Meta />
+        <Links />
+        <title>An error occured</title>
+      </head>
+      <body>
+        <header>
+          <MainNavigation />
+        </header>
+        <main className='error'>
+          <h1>an error occured</h1>
+          <p>{error.message}</p>
+          <p>
+            Back to <Link to='/'>safety</Link>!
+          </p>
+        </main>
         <Outlet />
         <ScrollRestoration />
         <Scripts />
