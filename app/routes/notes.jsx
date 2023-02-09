@@ -59,6 +59,14 @@ export async function action({ request }) {
   return redirect('/notes');
 }
 
+//metadata
+export function meta() {
+  return {
+    title: 'All notes',
+    description: 'manage your notes with ease.',
+  };
+}
+
 export function links() {
   return [...newNoteLinks(), ...noteListLinks()];
 }

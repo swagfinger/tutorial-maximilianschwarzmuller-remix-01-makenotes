@@ -19,6 +19,15 @@ export default function NoteDetailsPage() {
   );
 }
 
+//metadata
+//receives data object -> has property data - holds data returned by loader()
+export function meta({ data, params }) {
+  return {
+    title: data.title,
+    description: 'manage your notes with ease.',
+  };
+}
+
 export function links() {
   return [{ rel: 'stylesheet', href: styles }];
 }
